@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from typing import List, Optional, Dict
 import uvicorn
+import os
 
 app = FastAPI(
     title="API de Contratos por E-mail",
@@ -34,6 +35,12 @@ def agrupar_por_email(contratos: List[Contrato]) -> Dict[str, List[dict]]:
                 resultado[email].append(contrato_data)
     return resultado
 
-# 🚀 Inicia o servidor automaticamente ao rodar o script
+# Root endpoint to confirm the API is running
+@app.get("/")
+def read_root():
+    return {"status": "online", "message": "API de Contratos está em execução"}
+
+# Only run the server when executing locally
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run("main:app", host="0.0.0.0", port=port, reload=True)
